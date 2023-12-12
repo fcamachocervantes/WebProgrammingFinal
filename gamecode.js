@@ -2,7 +2,6 @@ const Game = {
 	width: 500,
 	height: 700,
 	canvas: document.getElementById("game_canvas"),
-	
 	nextFruitImg: document.getElementById("next_fruit"),
 	score: document.getElementById("score"),
 	currentScore: 0,
@@ -36,6 +35,40 @@ const Game = {
 	}
 }
 
-canvas = document.getElementById("game_canvas");
-//const mouse = Mouse.create(render.canvas);
+var canvas = document.getElementById("actual_canvas");
+var context = canvas.getContext("2d");
 Game.startGame();
+
+function mousePos (canvas, evt) {
+	var rect = canvas.getBoundingClientRect();
+	//console.log("Coordinate x: " + (evt.clientX - rect.left), "Coordinate y: " + (evt.clientY - rect.top));
+	return {
+		x: evt.clientX - rect.left,
+		y: evt.clientY - rect.top
+	};
+}
+
+canvas.addEventListener("mousemove", function(e){
+	coords = mousePos(canvas,e);
+	
+	/*
+	Will need to change this next line, this is just to prevent the image from staying
+	look at https://www.w3schools.com/graphics/game_intro.asp for help
+	*/
+	context.clearRect(0, 0, canvas.width, canvas.height);
+
+	//Load Image
+	var img = new Image();
+	img.src = "./images/fruit1.webp";
+	img.onload = function() {
+		context.drawImage(
+		img, coords.x, 0,
+		img.width,
+		img.height
+	)};
+	
+});
+	
+canvas.addEventListener("mousedown", function(e){
+	mousePos(canvas, e);
+});
