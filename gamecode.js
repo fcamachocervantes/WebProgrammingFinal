@@ -19,27 +19,63 @@ const Game = {
 		{ radius: 96, value: 10, img: "./images/fruit10.webp" },
 		{ radius: 102, value: 11, img: "./images/fruit11.webp" },
 	],
-	
-	calcScore: function() {
+
+	fruits: [],
+
+	calcScore: function () {
 		const sc = Game.merged.reduce((total, count, size) => {
 			const val = Game.fruitSizes[size].value * count;
 			return total + val;
 		}, 0);
-		
+
 		Game.currentScore = sc;
 		Game.score.textContent = "Score: " + Game.currentScore;
 	},
-	
-	startGame: function() {
+
+	createFruit: function (x) {
+		const randomSize = Game.fruitSizes[Math.floor(Math.random() * Game.fruitSizes.length)];
+		const newFruit = {
+			x: x,
+			y: 0,
+			size: randomSize,
+			img: new Image(),
+		};
+
+		newFruit.img.src = randomSize.img;
+
+		Game.fruits.push(newFruit);
+	},
+
+	moveFruits: function () {
+		Game.fruits.forEach((fruit) => {
+			if (fruit.y + fruit.size.radius * 2 < Game.height) {
+				fruit.y += 5;
+			}
+		});
+	},
+
+
+	drawFruits: function () {
+		Game.fruits.forEach((fruit) => {
+			context.drawImage(fruit.img, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
+		});
+	},
+
+	startGame: function () {
 		Game.calcScore();
-	}
+		setInterval(function () {
+			Game.moveFruits();
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			Game.drawFruits();
+		}, 20);
+	},
 }
 
 var canvas = document.getElementById("actual_canvas");
 var context = canvas.getContext("2d");
 Game.startGame();
 
-function mousePos (canvas, evt) {
+function mousePos(canvas, evt) {
 	var rect = canvas.getBoundingClientRect();
 	//console.log("Coordinate x: " + (evt.clientX - rect.left), "Coordinate y: " + (evt.clientY - rect.top));
 	return {
@@ -48,9 +84,9 @@ function mousePos (canvas, evt) {
 	};
 }
 
-canvas.addEventListener("mousemove", function(e){
-	coords = mousePos(canvas,e);
-	
+canvas.addEventListener("mousemove", function (e) {
+	coords = mousePos(canvas, e);
+
 	/*
 	Will need to change this next line, this is just to prevent the image from staying
 	look at https://www.w3schools.com/graphics/game_intro.asp for help
@@ -60,15 +96,17 @@ canvas.addEventListener("mousemove", function(e){
 	//Load Image
 	var img = new Image();
 	img.src = "./images/fruit1.webp";
-	img.onload = function() {
+	img.onload = function () {
 		context.drawImage(
-		img, coords.x, 0,
-		img.width,
-		img.height
-	)};
-	
+			img, coords.x, 0,
+			img.width,
+			img.height
+		)
+	};
+
 });
-	
-canvas.addEventListener("mousedown", function(e){
-	mousePos(canvas, e);
+
+canvas.addEventListener("mousedown", function (e) {
+	const clickCoords = mousePos(canvas, e);
+	Game.createFruit(clickCoords.x);
 });
