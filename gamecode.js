@@ -57,7 +57,7 @@ const Game = {
 
 	drawFruits: function () {
 		Game.fruits.forEach((fruit) => {
-			context.drawImage(fruit.img, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
+			myGameArea.context.drawImage(fruit.img, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
 		});
 	},
 
@@ -65,18 +65,26 @@ const Game = {
 		Game.calcScore();
 		setInterval(function () {
 			Game.moveFruits();
-			context.clearRect(0, 0, canvas.width, canvas.height);
+			myGameArea.context.clearRect(0, 0, myGameArea.canvas.width, myGameArea.canvas.height);
 			Game.drawFruits();
 		}, 20);
 	},
 }
 
-var canvas = document.getElementById("actual_canvas");
-var context = canvas.getContext("2d");
-Game.startGame();
+var myGameArea = {
+	canvas: document.getElementById("actual_canvas"),
+	start: function(){
+		this.context = this.canvas.getContext("2d");
+		this.frameNo = 0;
+		Game.startGame();
+	},
+}
+
+
+myGameArea.start();
 
 function mousePos(canvas, evt) {
-	var rect = canvas.getBoundingClientRect();
+	var rect = myGameArea.canvas.getBoundingClientRect();
 	//console.log("Coordinate x: " + (evt.clientX - rect.left), "Coordinate y: " + (evt.clientY - rect.top));
 	return {
 		x: evt.clientX - rect.left,
@@ -84,29 +92,18 @@ function mousePos(canvas, evt) {
 	};
 }
 
-canvas.addEventListener("mousemove", function (e) {
-	coords = mousePos(canvas, e);
+myGameArea.canvas.addEventListener("mousemove", function (e) {
+	coords = mousePos(myGameArea.canvas, e);
 
-	/*
-	Will need to change this next line, this is just to prevent the image from staying
-	look at https://www.w3schools.com/graphics/game_intro.asp for help
-	*/
-	context.clearRect(0, 0, canvas.width, canvas.height);
-
-	//Load Image
-	var img = new Image();
-	img.src = "./images/fruit1.webp";
-	img.onload = function () {
-		context.drawImage(
-			img, coords.x, 0,
-			img.width,
-			img.height
-		)
-	};
-
+	var img = new Image('./images/fruit1.webp')
+	myGameArea.context.drawImage(
+		img, coords.x, 0,
+		img.width,
+		img.height
+	);
 });
 
-canvas.addEventListener("mousedown", function (e) {
-	const clickCoords = mousePos(canvas, e);
+myGameArea.canvas.addEventListener("mousedown", function (e) {
+	const clickCoords = mousePos(myGameArea.canvas, e);
 	Game.createFruit(clickCoords.x);
 });
