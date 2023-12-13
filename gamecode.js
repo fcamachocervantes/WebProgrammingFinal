@@ -237,8 +237,8 @@ const Game = {
 
 	checkLose: function (canvasRect) {
 		Game.fruits.forEach((fruit) => {
-			if(fruit.y < canvasRect.top - 10) {
-				window.location.pathname = "/WebProgrammingFinal/gameOver.html";
+			if(fruit.y + fruit.size.radius * 2 < canvasRect.top - 10) {
+				//window.location.pathname = "/WebProgrammingFinal/gameOver.html";
 			}
 		});
 	},
