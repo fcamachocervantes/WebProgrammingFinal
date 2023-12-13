@@ -157,7 +157,6 @@ const Game = {
 		myGameArea.context.fillStyle = "#FF6A6A";
 		myGameArea.context.fill();
 		myGameArea.context.drawImage(new Image(), Game.mousex, Game.mousey);
-
 	},
 
 	startGame: function () {
