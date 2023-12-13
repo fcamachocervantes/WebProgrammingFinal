@@ -143,7 +143,7 @@ const Game = {
 							size: nextFruitSize,
 							img: new Image(),
 						};
-						mergedFruit.img.src = nextFruitSize.img;
+						mergedFruit.src = nextFruitSize.img;
 
 						//Add merged fruit to array
 						Game.fruits.push(mergedFruit);
