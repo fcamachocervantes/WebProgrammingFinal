@@ -76,10 +76,10 @@ const Game = {
 					if (fruit1.x + fruit1.size.radius * 2 < Game.width) {
 						fruit1.x += (overlap / 2) * Math.cos(angle);
 					}
-					if (fruit2.x + fruit2.size.radius * 2 > Game.width) {
+					if (fruit2.x + fruit2.size.radius * 2 > 0) {
 						fruit2.x -= (overlap / 2) * Math.cos(angle);
 					}
-					if (fruit2.y + fruit2.size.radius * 2 > Game.height) {
+					if (fruit2.y + fruit2.size.radius * 2 > 0) {
 						fruit2.y -= (overlap / 2) * Math.sin(angle);
 					}
 				}
