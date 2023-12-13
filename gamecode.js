@@ -59,7 +59,7 @@ const Game = {
 
 	moveFruits: function (canvasRect) {
 		Game.fruits.forEach((fruit) => {
-			if ((fruit.y + fruit.size.radius * 2) < Game.height && (fruit.y + fruit.size.radius * 2) > canvasRect.top) {
+			if ((fruit.y + fruit.size.radius * 2) < Game.height) {
 				fruit.y += fruit.y_velocity;
 			} else {
 				fruit.y_velocity = 10;
@@ -81,8 +81,8 @@ const Game = {
 					fruit.x_velocity += Math.abs(fruit.x_velocity / 2);
 				}
 			}
-			if (fruit.y_velocity < 2) {
-				fruit.y_velocity += Math.abs(fruit.y_velocity / 2);
+			if (fruit.y_velocity <= 0) {
+				fruit.y_velocity += 1;
 			}
 		});
 	},
