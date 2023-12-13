@@ -54,7 +54,7 @@ const Game = {
 		Game.fruits.push(newFruit);
 	},
 
-	moveFruits: function () {
+	moveFruits: function (canvasRect) {
 		Game.fruits.forEach((fruit) => {
 			if (fruit.y + fruit.size.radius * 2 < Game.height) {
 				fruit.y += 5;
@@ -69,27 +69,45 @@ const Game = {
 				const dx = fruit1.x - fruit2.x;
 				const dy = fruit1.y - fruit2.y;
 				const distance = Math.sqrt(dx * dx + dy * dy);
-
+				console.log(canvasRect.left);
 				//Check if the distance between the centers of two fruits is less than the sum of their radii
 				if (distance < fruit1.size.radius + fruit2.size.radius) {
-					// Collision detected, you may want to handle the collision here (e.g., remove or merge the collided fruits)
 					console.log("Collision detected!");
 
 					const overlap = (fruit1.size.radius + fruit2.size.radius) - distance;
 					const angle = Math.atan2(dy, dx);
 
 					// Move the fruits away from each other
-					if (fruit1.y + fruit1.size.radius * 2 < Game.height) {
-						fruit1.y += (overlap / 2) * Math.sin(angle);
+					if (fruit1.x >= fruit2.x) {
+						if (fruit1.x + fruit1.size.radius * 2 < Game.width) {
+							fruit1.x += (overlap / 2) * Math.cos(angle);
+						}
+						if (fruit2.x + fruit2.size.radius * 2 > canvasRect.left) {
+							fruit2.x -= (overlap / 2) * Math.cos(angle);
+						}
+					} else {
+						if (fruit1.x + fruit1.size.radius * 2 > canvasRect.left) {
+							fruit1.x -= (overlap / 2) * Math.cos(angle);
+						}
+						if (fruit2.x + fruit2.size.radius * 2 < Game.width) {
+							fruit2.x += (overlap / 2) * Math.cos(angle);
+						}
 					}
-					if (fruit1.x + fruit1.size.radius * 2 < Game.width) {
-						fruit1.x += (overlap / 2) * Math.cos(angle);
-					}
-					if (fruit2.x + fruit2.size.radius * 2 > 0) {
-						fruit2.x -= (overlap / 2) * Math.cos(angle);
-					}
-					if (fruit2.y + fruit2.size.radius * 2 > 0) {
-						fruit2.y -= (overlap / 2) * Math.sin(angle);
+
+					if (fruit1.y >= fruit2.y) {
+						if (fruit1.y + fruit1.size.radius * 2 < Game.height) {
+							fruit1.y += (overlap / 2) * Math.sin(angle);
+						}
+						if (fruit2.y + fruit2.size.radius * 2 > canvasRect.top) {
+							fruit2.y -= (overlap / 2) * Math.sin(angle);
+						}
+					} else {
+						if (fruit1.y + fruit1.size.radius * 2 > canvasRect.top) {
+							fruit1.y -= (overlap / 2) * Math.sin(angle);
+						}
+						if (fruit2.y + fruit2.size.radius * 2 < Game.height) {
+							fruit2.y += (overlap / 2) * Math.sin(angle);
+						}
 					}
 				}
 			}
@@ -112,8 +130,9 @@ const Game = {
 	startGame: function () {
 		Game.calcScore();
 		setInterval(function () {
-			Game.moveFruits();
 			myGameArea.context.clearRect(0, 0, myGameArea.canvas.width, myGameArea.canvas.height);
+			canvasRect = myGameArea.canvas.getBoundingClientRect();
+			Game.moveFruits(canvasRect);
 			Game.drawFruits();
 		}, 20);
 	},
