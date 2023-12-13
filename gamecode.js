@@ -201,16 +201,16 @@ const Game = {
 		Game.fruits.forEach((fruit) => {
 			base_image = new Image();
 			base_image.src = fruit.src;
-			base_image.onload = function() {
-				myGameArea.context.drawImage(this, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
-			}
+			
+				myGameArea.context.drawImage(base_image, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
+			
 		});
 
 		base_image = new Image();
 		base_image.src = Game.nextFruit.src;
-		base_image.onload = function () {
-			myGameArea.context.drawImage(this, 0, 0, this.width, this.height, Game.mousex, 0, this.width * 0.8, this.height * 0.8);
-		}
+		
+			myGameArea.context.drawImage(base_image, 0, 0, this.width, this.height, Game.mousex, 0, this.width * 0.8, this.height * 0.8);
+		
 	},
 
 	checkLose: function (canvasRect) {
@@ -226,8 +226,8 @@ const Game = {
 		setInterval(function () {
 			myGameArea.context.clearRect(0, 0, myGameArea.canvas.width, myGameArea.canvas.height);
 			canvasRect = myGameArea.canvas.getBoundingClientRect();
-			Game.moveFruits(canvasRect);
 			Game.drawFruits();
+			Game.moveFruits(canvasRect);
 			Game.checkCollisions(canvasRect);
 			Game.decayVelocity();
 			
