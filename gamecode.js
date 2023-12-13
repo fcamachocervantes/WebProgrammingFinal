@@ -40,6 +40,25 @@ const Game = {
 		Game.currentScore = sc;
 		Game.score.textContent = "Score: " + Game.currentScore;
 	},
+	
+	fruitGenerated: false,
+	nextFruit: null,
+	
+	generateNextFruit: function() {
+		if (Game.fruitGenerated == false){
+			const randomSize = Game.fruitSizes[Math.floor(Math.random() * Game.fruitSizes.length/2)];
+			Game.nextFruit = {
+				x: 0,
+				y: 0,
+				size: randomSize,
+				img: new Image(),
+			};
+			Game.fruitGenerated = true;
+			
+			console.log("Fruit generated: " +  Game.nextFruit);
+		}
+		console.log("Status: " + Game.fruitGenerated);
+	},
 
 	fruitGenerated: false,
 	nextFruit: null,
@@ -91,6 +110,7 @@ const Game = {
 			} else {
 				fruit.x_velocity = 0;
 			}
+			//console.log(fruit);
 		});
 	},
 
@@ -112,6 +132,9 @@ const Game = {
 	checkCollisions: function (canvasRect) {
 		for (let i = 0; i < Game.fruits.length; i++) {
 			for (let j = i + 1; j < Game.fruits.length; j++) {
+				
+				
+				
 				const fruit1 = Game.fruits[i];
 				const fruit2 = Game.fruits[j];
 
@@ -253,4 +276,5 @@ myGameArea.canvas.addEventListener("mousemove", function (e) {
 myGameArea.canvas.addEventListener("mousedown", function (e) {
 	const clickCoords = mousePos(myGameArea.canvas, e);
 	Game.createFruit(clickCoords.x);
+	Game.generateNextFruit();
 });
