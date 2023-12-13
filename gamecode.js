@@ -33,14 +33,13 @@ const Game = {
 	},
 
 	createFruit: function (x) {
-		const randomSize = Game.fruitSizes[Math.floor(Math.random() * Game.fruitSizes.length)];
+		const randomSize = Game.fruitSizes[Math.floor(Math.random() * Game.fruitSizes.length / 2)];
 		const newFruit = {
 			x: x,
 			y: 0,
 			size: randomSize,
 			img: new Image(),
 		};
-
 		newFruit.img.src = randomSize.img;
 
 		Game.fruits.push(newFruit);
@@ -52,8 +51,41 @@ const Game = {
 				fruit.y += 5;
 			}
 		});
-	},
 
+		for (let i = 0; i < Game.fruits.length; i++) {
+			for (let j = i + 1; j < Game.fruits.length; j++) {
+				const fruit1 = Game.fruits[i];
+				const fruit2 = Game.fruits[j];
+
+				const dx = fruit1.x - fruit2.x;
+				const dy = fruit1.y - fruit2.y;
+				const distance = Math.sqrt(dx * dx + dy * dy);
+
+				//Check if the distance between the centers of two fruits is less than the sum of their radii
+				if (distance < fruit1.size.radius + fruit2.size.radius) {
+					// Collision detected, you may want to handle the collision here (e.g., remove or merge the collided fruits)
+					console.log("Collision detected!");
+
+					const overlap = (fruit1.size.radius + fruit2.size.radius) - distance;
+					const angle = Math.atan2(dy, dx);
+
+					// Move the fruits away from each other
+					if (fruit1.y + fruit1.size.radius * 2 < Game.height) {
+						fruit1.y += (overlap / 2) * Math.sin(angle);
+					}
+					if (fruit1.x + fruit1.size.radius * 2 < Game.height) {
+						fruit1.x += (overlap / 2) * Math.cos(angle);
+					}
+					if (fruit2.x + fruit2.size.radius * 2 > Game.height) {
+						fruit2.x -= (overlap / 2) * Math.cos(angle);
+					}
+					if (fruit2.y + fruit2.size.radius * 2 > Game.height) {
+						fruit2.y -= (overlap / 2) * Math.sin(angle);
+					}
+				}
+			}
+		}
+	},
 
 	drawFruits: function () {
 		Game.fruits.forEach((fruit) => {
@@ -73,7 +105,7 @@ const Game = {
 
 var myGameArea = {
 	canvas: document.getElementById("actual_canvas"),
-	start: function(){
+	start: function () {
 		this.context = this.canvas.getContext("2d");
 		this.frameNo = 0;
 		Game.startGame();
