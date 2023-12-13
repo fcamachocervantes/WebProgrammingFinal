@@ -35,7 +35,7 @@ const Game = {
 		Game.fruits.forEach((fruit) => {
 			total += fruit.size.score;
 		});
-		
+
 
 		Game.currentScore = total;
 		console.log(Game.currentScore);
@@ -68,7 +68,7 @@ const Game = {
 		Game.nextFruit.x = x;
 		console.log(Game.nextFruit);
 		Game.fruits.push(Game.nextFruit);
-		
+
 		// generate the next fruit
 		Game.fruitGenerated = false;
 		Game.generateNextFruit();
@@ -97,8 +97,8 @@ const Game = {
 					fruit.x_velocity -= Math.abs(fruit.x_velocity / 2);
 				} else if (fruit.x_velocity < 0) {
 					fruit.x_velocity += Math.abs(fruit.x_velocity / 2);
-				} 
-				
+				}
+
 				if (fruit.y_velocity <= 0) {
 					fruit.y_velocity += 1;
 				}
@@ -202,26 +202,22 @@ const Game = {
 			base_image = new Image();
 			base_image.src = fruit.src;
 			myGameArea.context.drawImage(base_image, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
-			
+
 		});
 
 		base_image = new Image();
 		base_image.src = Game.nextFruit.src;
 		myGameArea.context.drawImage(base_image, 0, 0, this.width, this.height, Game.mousex, 0, this.width * 0.8, this.height * 0.8);
-		
+
 	},
 
 	checkLose: function (canvasRect) {
 		Game.fruits.forEach((fruit) => {
-			Game.fruits.forEach((fruit) => {
-				console.log(fruit.y);
-				console.log(canvasRect.top - 10);
-				if (fruit.y + fruit.size.radius * 2 < canvasRect.top - 10) {
-					var currentUrl = window.location.href;
-					var newUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1) + 'gameOver.html';
-					window.location.href = newUrl;
-				}
-			});
+			if (fruit.y < 0) {
+				var currentUrl = window.location.href;
+				var newUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1) + 'gameOver.html';
+				window.location.href = newUrl;
+			}
 		});
 	},
 
@@ -235,7 +231,7 @@ const Game = {
 			Game.checkCollisions(canvasRect);
 			Game.decayVelocity();
 			Game.calcScore();
-			
+
 			Game.checkLose(canvasRect);
 		}, 20);
 	},
