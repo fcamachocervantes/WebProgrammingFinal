@@ -51,26 +51,21 @@ const Game = {
 				x: 0,
 				y: 0,
 				size: randomSize,
-				img: new Image(),
+				img: new Image(randomSize.img),
+				src: randomSize.img
 			};
 			Game.fruitGenerated = true;
-			
-			console.log("Fruit generated: " +  Game.nextFruit);
 		}
-		console.log("Status: " + Game.fruitGenerated);
 	},
 
 	createFruit: function (x) {
-		const randomSize = Game.fruitSizes[Math.floor(Math.random() * Game.fruitSizes.length / 2)];
-		const newFruit = {
-			x: x,
-			y: 0,
-			size: randomSize,
-			img: new Image(),
-		};
-		newFruit.img.src = randomSize.img;
-
-		Game.fruits.push(newFruit);
+		Game.nextFruit.x = x;
+		console.log(Game.nextFruit);
+		Game.fruits.push(Game.nextFruit);
+		
+		// generate the next fruit
+		Game.fruitGenerated = false;
+		Game.generateNextFruit();
 	},
 
 	moveFruits: function (canvasRect) {
@@ -138,13 +133,17 @@ const Game = {
 	},
 
 	drawFruits: function () {
-		
+	
 		Game.fruits.forEach((fruit) => {
-			myGameArea.context.drawImage(fruit.img, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
+			base_image = new Image();
+			base_image.src = fruit.src;
+			base_image.onload = function() {
+				myGameArea.context.drawImage(this, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
+			}
 		});
 		
 		base_image = new Image();
-		base_image.src = './images/fruit2.webp';
+		base_image.src = Game.nextFruit.src;
 		base_image.onload = function () {
 			myGameArea.context.drawImage(this, 0, 0, this.width, this.height, Game.mousex, 0, this.width * 0.8, this.height * 0.8);
 		}
@@ -190,5 +189,4 @@ myGameArea.canvas.addEventListener("mousemove", function (e) {
 myGameArea.canvas.addEventListener("mousedown", function (e) {
 	const clickCoords = mousePos(myGameArea.canvas, e);
 	Game.createFruit(clickCoords.x);
-	Game.generateNextFruit();
 });
