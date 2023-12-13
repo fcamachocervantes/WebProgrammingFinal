@@ -63,7 +63,6 @@ const Game = {
 				console.log(canvasRect.left);
 				//Check if the distance between the centers of two fruits is less than the sum of their radii
 				if (distance < fruit1.size.radius + fruit2.size.radius) {
-					// Collision detected, you may want to handle the collision here (e.g., remove or merge the collided fruits)
 					console.log("Collision detected!");
 
 					const overlap = (fruit1.size.radius + fruit2.size.radius) - distance;
