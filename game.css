@@ -1,0 +1,48 @@
+body {
+    background-color: #FFD59D;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+#container {
+    text-align: center;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    gap: 20px;
+}
+
+.column {
+    text-align: center;
+}
+
+.score-column {
+    display: flex;
+    flex-direction: column;
+}
+
+#game_canvas {
+    margin: 0 auto;
+}
+
+#score-container,
+#next-fruit-container {
+    border: 1px solid #000000;
+    padding: 10px;
+    margin: 0;
+}
+
+#score {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0;
+}
+
+#actual_canvas {
+    border: 1px solid #000000;
+}
