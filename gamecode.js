@@ -28,7 +28,7 @@ const Game = {
 		var rect = myGameArea.canvas.getBoundingClientRect();
 		Game.mousex = e.clientX - rect.left;
 		Game.mousey = e.clientY - rect.top;
-		console.log(Game.mousex + "," + Game.mousey);
+		//console.log(Game.mousex + "," + Game.mousey);
 	},
 
 	calcScore: function () {
@@ -39,6 +39,25 @@ const Game = {
 
 		Game.currentScore = sc;
 		Game.score.textContent = "Score: " + Game.currentScore;
+	},
+	
+	fruitGenerated: false,
+	nextFruit: null,
+	
+	generateNextFruit: function() {
+		if (Game.fruitGenerated == false){
+			const randomSize = Game.fruitSizes[Math.floor(Math.random() * Game.fruitSizes.length/2)];
+			Game.nextFruit = {
+				x: 0,
+				y: 0,
+				size: randomSize,
+				img: new Image(),
+			};
+			Game.fruitGenerated = true;
+			
+			console.log("Fruit generated: " +  Game.nextFruit);
+		}
+		console.log("Status: " + Game.fruitGenerated);
 	},
 
 	createFruit: function (x) {
@@ -59,19 +78,23 @@ const Game = {
 			if (fruit.y + fruit.size.radius * 2 < Game.height) {
 				fruit.y += 5;
 			}
+			//console.log(fruit);
 		});
 
 		for (let i = 0; i < Game.fruits.length; i++) {
 			for (let j = i + 1; j < Game.fruits.length; j++) {
+				
+				
+				
 				const fruit1 = Game.fruits[i];
 				const fruit2 = Game.fruits[j];
 
 				const dx = fruit1.x - fruit2.x;
 				const dy = fruit1.y - fruit2.y;
 				const distance = Math.sqrt(dx * dx + dy * dy);
-				console.log(canvasRect.left);
+				const sumOfRadii = fruit1.size.radius + fruit2.size.radius;
 				//Check if the distance between the centers of two fruits is less than the sum of their radii
-				if (distance < fruit1.size.radius + fruit2.size.radius) {
+				if (distance < sumOfRadii) {
 					console.log("Collision detected!");
 
 					const overlap = (fruit1.size.radius + fruit2.size.radius) - distance;
@@ -115,16 +138,16 @@ const Game = {
 	},
 
 	drawFruits: function () {
+		
 		Game.fruits.forEach((fruit) => {
 			myGameArea.context.drawImage(fruit.img, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
 		});
 		
-		myGameArea.context.beginPath();
-		myGameArea.context.arc(Game.mousex, 25, 25, 0, 2 * Math.PI, true);
-		myGameArea.context.fillStyle = "#FF6A6A";
-		myGameArea.context.fill();
-		myGameArea.context.drawImage(new Image(), Game.mousex, Game.mousey);
-
+		base_image = new Image();
+		base_image.src = './images/fruit2.webp';
+		base_image.onload = function () {
+			myGameArea.context.drawImage(this, 0, 0, this.width, this.height, Game.mousex, 0, this.width * 0.8, this.height * 0.8);
+		}
 	},
 
 	startGame: function () {
@@ -143,6 +166,7 @@ var myGameArea = {
 	start: function () {
 		this.context = this.canvas.getContext("2d");
 		this.frameNo = 0;
+		Game.generateNextFruit();
 		Game.startGame();
 	},
 }
@@ -166,4 +190,5 @@ myGameArea.canvas.addEventListener("mousemove", function (e) {
 myGameArea.canvas.addEventListener("mousedown", function (e) {
 	const clickCoords = mousePos(myGameArea.canvas, e);
 	Game.createFruit(clickCoords.x);
+	Game.generateNextFruit();
 });
