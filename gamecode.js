@@ -28,7 +28,7 @@ const Game = {
 		var rect = myGameArea.canvas.getBoundingClientRect();
 		Game.mousex = e.clientX - rect.left;
 		Game.mousey = e.clientY - rect.top;
-		console.log(Game.mousex + "," + Game.mousey);
+		//console.log(Game.mousex + "," + Game.mousey);
 	},
 
 	calcScore: function () {
@@ -39,6 +39,28 @@ const Game = {
 
 		Game.currentScore = sc;
 		Game.score.textContent = "Score: " + Game.currentScore;
+	},
+
+	fruitGenerated: false,
+	nextFruit: null,
+
+	generateNextFruit: function() {
+		if (Game.fruitGenerated == false){
+			const randomSize = Game.fruitSizes[Math.floor(Math.random() * Game.fruitSizes.length/2)];
+			Game.nextFruit = {
+				x: 0,
+				y: 0,
+				x_velocity: 0,
+				y_velocity: 10,
+				colliding: false,
+				size: randomSize,
+				img: new Image(),
+			};
+			Game.fruitGenerated = true;
+			
+			console.log("Fruit generated: " +  Game.nextFruit);
+		}
+		console.log("Status: " + Game.fruitGenerated);
 	},
 
 	createFruit: function (x) {
@@ -81,7 +103,7 @@ const Game = {
 					fruit.x_velocity += Math.abs(fruit.x_velocity / 2);
 				}
 			}
-			if (fruit.y_velocity <= 0) {
+			if (fruit.y_velocity <= 4) {
 				fruit.y_velocity += 1;
 			}
 		});
@@ -96,47 +118,76 @@ const Game = {
 				const dx = fruit1.x - fruit2.x;
 				const dy = fruit1.y - fruit2.y;
 				const distance = Math.sqrt(dx * dx + dy * dy);
-				console.log(canvasRect.left);
+				const sumOfRadii = fruit1.size.radius + fruit2.size.radius;
 				//Check if the distance between the centers of two fruits is less than the sum of their radii
-				if (distance < fruit1.size.radius + fruit2.size.radius) {
+				if (distance < sumOfRadii) {
 					console.log("Collision detected!");
 
-					fruit1.colliding = true;
-					fruit2.colliding = true;
+					if (fruit1.size.value === fruit2.size.value) {
+						//Get rid of the merging fruit
+						Game.fruits.splice(i, 1);
+						Game.fruits.splice(j - 1, 1);
 
-					const overlap = (fruit1.size.radius + fruit2.size.radius) - distance;
-					const angle = Math.atan2(dy, dx);
+						//Average the two fruits position to place the new fruit
+						const mergedX = (fruit1.x + fruit2.x) / 2;
+						const mergedY = (fruit1.y + fruit2.y) / 2;
 
-					// Move the fruits away from each other
-					if (fruit1.x >= fruit2.x) {
-						if (fruit1.x + fruit1.size.radius * 2 < Game.width) {
-							fruit1.x_velocity += 1;
-						}
-						if (fruit2.x + fruit2.size.radius * 2 > canvasRect.left) {
-							fruit2.x_velocity -= 1;
-						}
+						//Create the new merged fruit
+						const nextFruitIndex = (fruit1.size.value % Game.fruitSizes.length) + 1;
+						const nextFruitSize = Game.fruitSizes[nextFruitIndex - 1];
+						const mergedFruit = {
+							x: mergedX,
+							y: mergedY,
+							x_velocity: 0,
+							y_velocity: 0,
+							colliding: false,
+							size: nextFruitSize,
+							img: new Image(),
+						};
+						mergedFruit.img.src = nextFruitSize.img;
+
+						//Add merged fruit to array
+						Game.fruits.push(mergedFruit);
+						Game.calcScore();
+
 					} else {
-						if (fruit1.x + fruit1.size.radius * 2 > canvasRect.left) {
-							fruit1.x_velocity -= 1;
-						}
-						if (fruit2.x + fruit2.size.radius * 2 < Game.width) {
-							fruit2.x_velocity += 1;
-						}
-					}
+						fruit1.colliding = true;
+						fruit2.colliding = true;
 
-					if (fruit1.y >= fruit2.y) {
-						if (fruit1.y + fruit1.size.radius * 2 < Game.height) {
-							fruit1.y_velocity += 1;
+						const overlap = (fruit1.size.radius + fruit2.size.radius) - distance;
+						const angle = Math.atan2(dy, dx);
+
+						// Move the fruits away from each other
+						if (fruit1.x >= fruit2.x) {
+							if (fruit1.x + fruit1.size.radius * 2 < Game.width) {
+								fruit1.x_velocity += 1;
+							}
+							if (fruit2.x + fruit2.size.radius * 2 > canvasRect.left) {
+								fruit2.x_velocity -= 1;
+							}
+						} else {
+							if (fruit1.x + fruit1.size.radius * 2 > canvasRect.left) {
+								fruit1.x_velocity -= 1;
+							}
+							if (fruit2.x + fruit2.size.radius * 2 < Game.width) {
+								fruit2.x_velocity += 1;
+							}
 						}
-						if (fruit2.y + fruit2.size.radius * 2 > canvasRect.top) {
-							fruit2.y_velocity -= 1;
-						}
-					} else {
-						if (fruit1.y + fruit1.size.radius * 2 > canvasRect.top) {
-							fruit1.y_velocity -= 1;
-						}
-						if (fruit2.y_velocity + fruit2.size.radius * 2 < Game.height) {
-							fruit2.y_velocity += 1;
+
+						if (fruit1.y >= fruit2.y) {
+							if (fruit1.y + fruit1.size.radius * 2 < Game.height) {
+								fruit1.y_velocity += 1;
+							}
+							if (fruit2.y + fruit2.size.radius * 2 > canvasRect.top) {
+								fruit2.y_velocity -= 1;
+							}
+						} else {
+							if (fruit1.y + fruit1.size.radius * 2 > canvasRect.top) {
+								fruit1.y_velocity -= 1;
+							}
+							if (fruit2.y_velocity + fruit2.size.radius * 2 < Game.height) {
+								fruit2.y_velocity += 1;
+							}
 						}
 					}
 				} else {
@@ -148,15 +199,16 @@ const Game = {
 	},
 
 	drawFruits: function () {
+		
 		Game.fruits.forEach((fruit) => {
 			myGameArea.context.drawImage(fruit.img, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
 		});
-
-		myGameArea.context.beginPath();
-		myGameArea.context.arc(Game.mousex, 25, 25, 0, 2 * Math.PI, true);
-		myGameArea.context.fillStyle = "#FF6A6A";
-		myGameArea.context.fill();
-		myGameArea.context.drawImage(new Image(), Game.mousex, Game.mousey);
+		
+		base_image = new Image();
+		base_image.src = './images/fruit2.webp';
+		base_image.onload = function () {
+			myGameArea.context.drawImage(this, 0, 0, this.width, this.height, Game.mousex, 0, this.width * 0.8, this.height * 0.8);
+		}
 	},
 
 	startGame: function () {
@@ -177,6 +229,7 @@ var myGameArea = {
 	start: function () {
 		this.context = this.canvas.getContext("2d");
 		this.frameNo = 0;
+		Game.generateNextFruit();
 		Game.startGame();
 	},
 }
