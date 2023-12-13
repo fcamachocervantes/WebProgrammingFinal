@@ -5,21 +5,20 @@ const Game = {
 	nextFruitImg: document.getElementById("next_fruit"),
 	score: document.getElementById("score"),
 	currentScore: 0,
-	merged: [],
 	mousex: 0,
 	mousey: 0,
 	fruitSizes: [
-		{ radius: 24, value: 1, img: "./images/fruit1.webp" },
-		{ radius: 32, value: 2, img: "./images/fruit2.webp" },
-		{ radius: 40, value: 3, img: "./images/fruit3.webp" },
-		{ radius: 48, value: 4, img: "./images/fruit4.webp" },
-		{ radius: 56, value: 5, img: "./images/fruit5.webp" },
-		{ radius: 64, value: 6, img: "./images/fruit6.webp" },
-		{ radius: 72, value: 7, img: "./images/fruit7.webp" },
-		{ radius: 80, value: 8, img: "./images/fruit8.webp" },
-		{ radius: 88, value: 9, img: "./images/fruit9.webp" },
-		{ radius: 96, value: 10, img: "./images/fruit10.webp" },
-		{ radius: 102, value: 11, img: "./images/fruit11.webp" },
+		{ radius: 24, value: 1, score: 3, img: "./images/fruit1.webp" },
+		{ radius: 32, value: 2, score: 10, img: "./images/fruit2.webp" },
+		{ radius: 40, value: 3, score: 29, img: "./images/fruit3.webp" },
+		{ radius: 48, value: 4, score: 66, img: "./images/fruit4.webp" },
+		{ radius: 56, value: 5, score: 127, img: "./images/fruit5.webp" },
+		{ radius: 64, value: 6, score: 218, img: "./images/fruit6.webp" },
+		{ radius: 72, value: 7, score: 345, img: "./images/fruit7.webp" },
+		{ radius: 80, value: 8, score: 514, img: "./images/fruit8.webp" },
+		{ radius: 88, value: 9, score: 731, img: "./images/fruit9.webp" },
+		{ radius: 96, value: 10, score: 1002, img: "./images/fruit10.webp" },
+		{ radius: 102, value: 11, score: 1333, img: "./images/fruit11.webp" },
 	],
 
 	fruits: [],
@@ -32,12 +31,14 @@ const Game = {
 	},
 
 	calcScore: function () {
-		const sc = Game.merged.reduce((total, count, size) => {
-			const val = Game.fruitSizes[size].value * count;
-			return total + val;
-		}, 0);
+		var total = 0;
+		Game.fruits.forEach((fruit) => {
+			total += fruit.size.score;
+		});
+		
 
-		Game.currentScore = sc;
+		Game.currentScore = total;
+		console.log(Game.currentScore);
 		Game.score.textContent = "Score: " + Game.currentScore;
 	},
 
@@ -147,7 +148,6 @@ const Game = {
 
 						//Add merged fruit to array
 						Game.fruits.push(mergedFruit);
-						Game.calcScore();
 
 					} else {
 						fruit1.colliding = true;
@@ -201,15 +201,13 @@ const Game = {
 		Game.fruits.forEach((fruit) => {
 			base_image = new Image();
 			base_image.src = fruit.src;
-			
-				myGameArea.context.drawImage(base_image, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
+			myGameArea.context.drawImage(base_image, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
 			
 		});
 
 		base_image = new Image();
 		base_image.src = Game.nextFruit.src;
-		
-			myGameArea.context.drawImage(base_image, 0, 0, this.width, this.height, Game.mousex, 0, this.width * 0.8, this.height * 0.8);
+		myGameArea.context.drawImage(base_image, 0, 0, this.width, this.height, Game.mousex, 0, this.width * 0.8, this.height * 0.8);
 		
 	},
 
@@ -230,6 +228,7 @@ const Game = {
 			Game.moveFruits(canvasRect);
 			Game.checkCollisions(canvasRect);
 			Game.decayVelocity();
+			Game.calcScore();
 			
 			Game.checkLose(canvasRect);
 		}, 20);
