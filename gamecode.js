@@ -235,6 +235,14 @@ const Game = {
 		}
 	},
 
+	checkLose: function (canvasRect) {
+		Game.fruits.forEach((fruit) => {
+			if(fruit.y < canvasRect.top - 10) {
+				window.location.pathname = "/WebProgrammingFinal/gameOver.html";
+			}
+		});
+	},
+
 	startGame: function () {
 		Game.calcScore();
 		setInterval(function () {
@@ -244,6 +252,7 @@ const Game = {
 			Game.checkCollisions(canvasRect);
 			Game.decayVelocity();
 			Game.drawFruits();
+			Game.checkLose(canvasRect);
 		}, 20);
 	},
 }
