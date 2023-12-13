@@ -6,6 +6,8 @@ const Game = {
 	score: document.getElementById("score"),
 	currentScore: 0,
 	merged: [],
+	mousex: 0,
+	mousey: 0,
 	fruitSizes: [
 		{ radius: 24, value: 1, img: "./images/fruit1.webp" },
 		{ radius: 32, value: 2, img: "./images/fruit2.webp" },
@@ -21,6 +23,13 @@ const Game = {
 	],
 
 	fruits: [],
+
+	setMousePosition: function (e){
+		var rect = myGameArea.canvas.getBoundingClientRect();
+		Game.mousex = e.clientX - rect.left;
+		Game.mousey = e.clientY - rect.top;
+		console.log(Game.mousex + "," + Game.mousey);
+	},
 
 	calcScore: function () {
 		const sc = Game.merged.reduce((total, count, size) => {
@@ -91,6 +100,13 @@ const Game = {
 		Game.fruits.forEach((fruit) => {
 			myGameArea.context.drawImage(fruit.img, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
 		});
+		
+		myGameArea.context.beginPath();
+		myGameArea.context.arc(Game.mousex, 25, 25, 0, 2 * Math.PI, true);
+		myGameArea.context.fillStyle = "#FF6A6A";
+		myGameArea.context.fill();
+		myGameArea.context.drawImage(new Image(), Game.mousex, Game.mousey);
+
 	},
 
 	startGame: function () {
@@ -125,14 +141,7 @@ function mousePos(canvas, evt) {
 }
 
 myGameArea.canvas.addEventListener("mousemove", function (e) {
-	coords = mousePos(myGameArea.canvas, e);
-
-	var img = new Image('./images/fruit1.webp')
-	myGameArea.context.drawImage(
-		img, coords.x, 0,
-		img.width,
-		img.height
-	);
+	Game.setMousePosition(e);
 });
 
 myGameArea.canvas.addEventListener("mousedown", function (e) {
