@@ -40,13 +40,13 @@ const Game = {
 		Game.currentScore = sc;
 		Game.score.textContent = "Score: " + Game.currentScore;
 	},
-	
+
 	fruitGenerated: false,
 	nextFruit: null,
-	
-	generateNextFruit: function() {
-		if (Game.fruitGenerated == false){
-			const randomSize = Game.fruitSizes[Math.floor(Math.random() * Game.fruitSizes.length/2)];
+
+	generateNextFruit: function () {
+		if (Game.fruitGenerated == false) {
+			const randomSize = Game.fruitSizes[Math.floor(Math.random() * Game.fruitSizes.length / 2)];
 			Game.nextFruit = {
 				x: 0,
 				y: 0,
@@ -54,8 +54,8 @@ const Game = {
 				img: new Image(),
 			};
 			Game.fruitGenerated = true;
-			
-			console.log("Fruit generated: " +  Game.nextFruit);
+
+			console.log("Fruit generated: " + Game.nextFruit);
 		}
 		console.log("Status: " + Game.fruitGenerated);
 	},
@@ -63,9 +63,9 @@ const Game = {
 	fruitGenerated: false,
 	nextFruit: null,
 
-	generateNextFruit: function() {
-		if (Game.fruitGenerated == false){
-			const randomSize = Game.fruitSizes[Math.floor(Math.random() * Game.fruitSizes.length/2)];
+	generateNextFruit: function () {
+		if (Game.fruitGenerated == false) {
+			const randomSize = Game.fruitSizes[Math.floor(Math.random() * Game.fruitSizes.length / 2)];
 			Game.nextFruit = {
 				x: 0,
 				y: 0,
@@ -76,8 +76,8 @@ const Game = {
 				img: new Image(),
 			};
 			Game.fruitGenerated = true;
-			
-			console.log("Fruit generated: " +  Game.nextFruit);
+
+			console.log("Fruit generated: " + Game.nextFruit);
 		}
 		console.log("Status: " + Game.fruitGenerated);
 	},
@@ -121,10 +121,11 @@ const Game = {
 					fruit.x_velocity -= Math.abs(fruit.x_velocity / 2);
 				} else if (fruit.x_velocity < 0) {
 					fruit.x_velocity += Math.abs(fruit.x_velocity / 2);
+				} 
+				
+				if (fruit.y_velocity <= 0) {
+					fruit.y_velocity += 1;
 				}
-			}
-			if (fruit.y_velocity <= 4) {
-				fruit.y_velocity += 1;
 			}
 		});
 	},
@@ -132,9 +133,9 @@ const Game = {
 	checkCollisions: function (canvasRect) {
 		for (let i = 0; i < Game.fruits.length; i++) {
 			for (let j = i + 1; j < Game.fruits.length; j++) {
-				
-				
-				
+
+
+
 				const fruit1 = Game.fruits[i];
 				const fruit2 = Game.fruits[j];
 
@@ -222,11 +223,11 @@ const Game = {
 	},
 
 	drawFruits: function () {
-		
+
 		Game.fruits.forEach((fruit) => {
 			myGameArea.context.drawImage(fruit.img, fruit.x, fruit.y, fruit.size.radius * 2, fruit.size.radius * 2);
 		});
-		
+
 		base_image = new Image();
 		base_image.src = './images/fruit2.webp';
 		base_image.onload = function () {
