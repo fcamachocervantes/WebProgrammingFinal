@@ -213,9 +213,15 @@ const Game = {
 
 	checkLose: function (canvasRect) {
 		Game.fruits.forEach((fruit) => {
-			if(fruit.y + fruit.size.radius * 2 < canvasRect.top - 10) {
-				//window.location.pathname = "/WebProgrammingFinal/gameOver.html";
-			}
+			Game.fruits.forEach((fruit) => {
+				console.log(fruit.y);
+				console.log(canvasRect.top - 10);
+				if (fruit.y + fruit.size.radius * 2 < canvasRect.top - 10) {
+					var currentUrl = window.location.href;
+					var newUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1) + 'gameOver.html';
+					window.location.href = newUrl;
+				}
+			});
 		});
 	},
 
