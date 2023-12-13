@@ -74,39 +74,65 @@ const Game = {
 				if (distance < fruit1.size.radius + fruit2.size.radius) {
 					console.log("Collision detected!");
 
-					const overlap = (fruit1.size.radius + fruit2.size.radius) - distance;
-					const angle = Math.atan2(dy, dx);
+					if (fruit1.size.value === fruit2.size.value) {
+						//Get rid of the merging fruit
+						Game.fruits.splice(i, 1);
+						Game.fruits.splice(j - 1, 1);
+	
+						//Average the two fruits position to place the new fruit
+						const mergedX = (fruit1.x + fruit2.x) / 2;
+						const mergedY = (fruit1.y + fruit2.y) / 2;
+	
+						//Create the new merged fruit
+						const nextFruitIndex = (fruit1.size.value % Game.fruitSizes.length) + 1;
+						const nextFruitSize = Game.fruitSizes[nextFruitIndex - 1];
+						const mergedFruit = {
+							x: mergedX,
+							y: mergedY,
+							size: nextFruitSize,
+							img: new Image(),
+						};
+						mergedFruit.img.src = nextFruitSize.img;
+	
+						//Add merged fruit to array
+						Game.fruits.push(mergedFruit);
+						Game.calcScore();
 
-					// Move the fruits away from each other
-					if (fruit1.x >= fruit2.x) {
-						if (fruit1.x + fruit1.size.radius * 2 < Game.width) {
-							fruit1.x += (overlap / 2) * Math.cos(angle);
-						}
-						if (fruit2.x + fruit2.size.radius * 2 > canvasRect.left) {
-							fruit2.x -= (overlap / 2) * Math.cos(angle);
-						}
 					} else {
-						if (fruit1.x + fruit1.size.radius * 2 > canvasRect.left) {
-							fruit1.x -= (overlap / 2) * Math.cos(angle);
-						}
-						if (fruit2.x + fruit2.size.radius * 2 < Game.width) {
-							fruit2.x += (overlap / 2) * Math.cos(angle);
-						}
-					}
+						const overlap = (fruit1.size.radius + fruit2.size.radius) - distance;
+						const angle = Math.atan2(dy, dx);
 
-					if (fruit1.y >= fruit2.y) {
-						if (fruit1.y + fruit1.size.radius * 2 < Game.height) {
-							fruit1.y += (overlap / 2) * Math.sin(angle);
+						// Move the fruits away from each other
+						if (fruit1.x >= fruit2.x) {
+							if (fruit1.x + fruit1.size.radius * 2 < Game.width) {
+								fruit1.x += (overlap / 2) * Math.cos(angle);
+							}
+							if (fruit2.x + fruit2.size.radius * 2 > canvasRect.left) {
+								fruit2.x -= (overlap / 2) * Math.cos(angle);
+							}
+						} else {
+							if (fruit1.x + fruit1.size.radius * 2 > canvasRect.left) {
+								fruit1.x -= (overlap / 2) * Math.cos(angle);
+							}
+							if (fruit2.x + fruit2.size.radius * 2 < Game.width) {
+								fruit2.x += (overlap / 2) * Math.cos(angle);
+							}
 						}
-						if (fruit2.y + fruit2.size.radius * 2 > canvasRect.top) {
-							fruit2.y -= (overlap / 2) * Math.sin(angle);
-						}
-					} else {
-						if (fruit1.y + fruit1.size.radius * 2 > canvasRect.top) {
-							fruit1.y -= (overlap / 2) * Math.sin(angle);
-						}
-						if (fruit2.y + fruit2.size.radius * 2 < Game.height) {
-							fruit2.y += (overlap / 2) * Math.sin(angle);
+
+						if (fruit1.y >= fruit2.y) {
+							if (fruit1.y + fruit1.size.radius * 2 < Game.height) {
+								fruit1.y += (overlap / 2) * Math.sin(angle);
+							}
+							if (fruit2.y + fruit2.size.radius * 2 > canvasRect.top) {
+								fruit2.y -= (overlap / 2) * Math.sin(angle);
+							}
+						} else {
+							if (fruit1.y + fruit1.size.radius * 2 > canvasRect.top) {
+								fruit1.y -= (overlap / 2) * Math.sin(angle);
+							}
+							if (fruit2.y + fruit2.size.radius * 2 < Game.height) {
+								fruit2.y += (overlap / 2) * Math.sin(angle);
+							}
 						}
 					}
 				}
