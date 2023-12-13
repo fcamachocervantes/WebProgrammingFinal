@@ -227,9 +227,10 @@ const Game = {
 			myGameArea.context.clearRect(0, 0, myGameArea.canvas.width, myGameArea.canvas.height);
 			canvasRect = myGameArea.canvas.getBoundingClientRect();
 			Game.moveFruits(canvasRect);
+			Game.drawFruits();
 			Game.checkCollisions(canvasRect);
 			Game.decayVelocity();
-			Game.drawFruits();
+			
 			Game.checkLose(canvasRect);
 		}, 20);
 	},
